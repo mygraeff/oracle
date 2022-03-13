@@ -1,6 +1,8 @@
 -- Compression Advisor 
 -- Roland Graeff, Oracle ACS
 -- 2022 - 19c
+-- https://github.com/mygraeff/oracle/blob/main/compression/compression_advisor.sql
+
 
 /* notes / whitepapers
  
