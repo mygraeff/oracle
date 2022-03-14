@@ -231,6 +231,9 @@ ALTER TABLE T1 ROW STORE COMPRESS ADVANCED;
 
 -- compress existing table - table is online for read operations - table locked exclusive 
 ALTER TABLE T1 MOVE ROW STORE COMPRESS ADVANCED;  
+
+-- compress existing table - online
+ALTER TABLE T1 MOVE TABLE ONLINE ROW STORE COMPRESS ADVANCED;  
  
  -- find compression in a table
  col Compression_type format a50
