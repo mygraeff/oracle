@@ -7,9 +7,8 @@
 /* notes / whitepapers
  
 
- https://www.oracle.com/a/otn/docs/getstartedwithacotwp-5104153.pdf
+https://www.oracle.com/a/otn/docs/getstartedwithacotwp-5104153.pdf
 Information Center: Advanced Compression (Doc ID 1526780.2)
-1477918.1
 
 https://blogs.oracle.com/dbstorage/post/compression-advisor-a-valuable-but-often-overlooked-tool-insights-and-best-practices
 
@@ -224,6 +223,7 @@ alter table <TABLE_NAME> modify default attributes compress for oltp;
 
 insert into table target_table select * from source_table sample (10);
 -- the testing - drop target_table purge;
+
 
  
 -- compress table for future dml- existing blocks are still uncompressed
