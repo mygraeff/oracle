@@ -30,6 +30,26 @@ https://blogs.oracle.com/dbstorage/post/interested-in-oracle-database-compressio
 How to Compress an Existing Table (Doc ID 1080816.1)
 How to Set Compression for Future Table Partitions (Doc ID 1984916.1)
 
+https://blogs.oracle.com/dbstorage/category/dbs-advanced-compression
+https://www.oracle.com/technetwork/database/options/compression/advanced-compression-wp-12c-1896128.pdf
+
+
+
+CONSIDERATIONS :
+- comression advisor creates CMP-tables in scratch-tablespace e.g. USERS
+- choose tables to compress carefully - best use archive tables, take care of high volatile tables
+- modifying existing blocks will increase undo/redo and cpu
+- compressing objects can also improve performance due to less blocks needs to be read
+- compression can be used on an existing table, only new blocks will be compressed, the existing won't get changed
+  this can can cause different sql performance  e.g. some queries might use compressed, some uncompressed blocks
+- ask your application contacts which objects are e.g. archived tables  / verify for readonly tables
+- otherwise check dba_tab_modifications / dba_tables minus dba_tab_modifications  - don't use high volatile objects
+- create a new tablespace for compressed objects  
+  the remaining objects in the origin tablespace needs to be reorganized as well to shrink the datafile
+  without moving the uncompressed objects could prevent to shrink the old datafile due to wide spreaded extents
+- finally - test test test - not only regarding funkctionality  - in special for performance
+
+
 */
 
 set lines 180 pages 100
@@ -103,6 +123,7 @@ set serveroutput on
  cmptype_str varchar2(100);
  BEGIN
  DBMS_COMPRESSION.GET_COMPRESSION_RATIO ('USERS', 'S0YO', 'S0YRCIBZ', '', 
+ -- change compression_type to compare for appropriate results
  DBMS_COMPRESSION.COMP_ADVANCED , 
  blkcnt_cmp, blkcnt_uncmp,row_cmp, row_uncmp, cmp_ratio, cmptype_str);
  
@@ -116,6 +137,13 @@ set serveroutput on
  /
  
  
+ -- identify corresponding indexes
+ col index_name format a30
+ select index_name, blevel from dba_indexes
+  where owner = 'S0YO'
+    and table_name = 'S0YRCIBZ'
+/
+
  -- get index compression rate
 
  set serveroutput on
@@ -195,10 +223,14 @@ create table target_table as select * from  source_table where 1=2;
 alter table <TABLE_NAME> modify default attributes compress for oltp; 
 
 insert into table target_table select * from source_table sample (10);
+-- the testing - drop target_table purge;
+
  
--- compress table
-ALTER TABLE T1 move COMPRESS;
-  
+-- compress table for future dml- existing blocks are still uncompressed
+ALTER TABLE T1 ROW STORE COMPRESS ADVANCED;
+
+-- compress existing table - table is online for read operations - table locked exclusive 
+ALTER TABLE T1 MOVE ROW STORE COMPRESS ADVANCED;  
  
  -- find compression in a table
  col Compression_type format a50
