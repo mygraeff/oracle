@@ -1,7 +1,7 @@
 -- script to cleanup recyclebin older 60 days
 -- interval 30 min, delete only 1500 entries at once
 -- Roland Graeff, Oracle Germany Advanced Customer Services (ACS)
--- 2022
+-- https://github.com/mygraeff/oracle
 
 --grant select on dba_users to JOBOWNER;
 --grant select on  dba_recyclebin to JOBOWNER;
@@ -85,4 +85,12 @@ sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attr
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'job_weight', value => 1); 
 -- sys.dbms_scheduler.enable( '"PURGE_RECYCLEBIN_OLDER60DAYS"' ); 
 END;
+/
+
+
+-- to verify the history of the schedules
+select LOG_DATE,STATUS,RUN_DURATION,ERRORS,output 
+ from DBA_SCHEDULER_JOB_RUN_DETAILS  
+  where job_name = 'PURGE_RECYCLEBIN_OLDER60DAYS' 
+ order by log_date
 /

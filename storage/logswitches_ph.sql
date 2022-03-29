@@ -13,6 +13,7 @@
 --
 -- Roland Graeff, Oracle Germany Advanced Customer Services (ACS)
 -- 2022
+-- https://github.com/mygraeff/oracle
 
 set feed off
 set pagesize 10000
