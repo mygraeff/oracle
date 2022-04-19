@@ -72,6 +72,13 @@ select data_type, count(*)
 /
 
 
+-- adv.compression not able on LONG
+select distinct table_name 
+ from dba_tab_cols
+  where owner = 'S0YO'
+    and data_type = 'LONG'
+/
+
 -- check object sizes
 col segment_name format a40
 select segment_name, round(sum(bytes)/1024/1024/1024,2) GB 
@@ -269,3 +276,23 @@ FROM  (
 )
 /
 
+-- show already compressed / compress_for tables
+select owner,compression,compress_for, count(*)
+ from dba_tables
+  where
+    owner not in (select username from dba_users where oracle_maintained = 'Y')
+ group by cube(owner,compression,compress_for)
+ order by 1,2,3
+/
+
+
+-- show compressed tables of a schema which were modified
+col table_name format a40
+select m.table_name,t.num_rows,t.blocks,  inserts, updates, deletes, inserts+updates+deletes sumdml
+ from dba_tab_modifications m, dba_tables t
+  where m.table_owner = 'S0YO'
+    and m.table_name = t.table_name
+    and t.compression = 'ENABLED'
+ order by sumdml desc, num_rows asc
+ fetch first 100 rows only
+/

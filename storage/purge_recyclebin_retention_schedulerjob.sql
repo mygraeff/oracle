@@ -31,7 +31,7 @@ BEGIN
           Where
                Type = ''TABLE''
            and can_purge = ''YES''
-           and owner not in (select username from dba_users where oracle_maintained = ''YES'')
+           and owner not in (select username from dba_users where oracle_maintained = ''Y'')
            and to_date(droptime, ''yyyy-mm-dd:hh24:mi:ss'')   < sysdate-60]''
         into num_recycles;
    DBMS_OUTPUT.put_line(''Num entries dba-recyclebin to delete ''||to_char(sysdate,''dd-mm-yy hh24:mi:ss'')||'' : ''||num_recycles);
@@ -43,7 +43,7 @@ BEGIN
           Where
                 Type = ''TABLE''
             and can_purge = ''YES''
-            and owner not in (select username from dba_users where oracle_maintained = ''YES'')
+            and owner not in (select username from dba_users where oracle_maintained = ''Y'')
             and to_date(droptime, ''yyyy-mm-dd:hh24:mi:ss'')   < sysdate-60
            order by  to_date(droptime, ''yyyy-mm-dd:hh24:mi:ss'')  asc
            fetch first 1500 rows only]''           
@@ -62,7 +62,7 @@ BEGIN
           Where
                Type = ''TABLE''
            and can_purge = ''YES''
-           and owner not in (select username from dba_users where oracle_maintained = ''YES'')
+           and owner not in (select username from dba_users where oracle_maintained = ''Y'')
            and to_date(droptime, ''yyyy-mm-dd:hh24:mi:ss'')   < sysdate-60]''
         into num_recycles;
    dbms_output.new_line;
