@@ -83,7 +83,7 @@ enabled => FALSE);
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'max_failures', value => 10); 
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'logging_level', value => DBMS_SCHEDULER.LOGGING_OFF); 
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'job_weight', value => 1); 
--- sys.dbms_scheduler.enable( '"PURGE_RECYCLEBIN_OLDER60DAYS"' ); 
+sys.dbms_scheduler.enable( '"PURGE_RECYCLEBIN_OLDER60DAYS"' ); 
 END;
 /
 
