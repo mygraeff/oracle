@@ -83,10 +83,16 @@ enabled => FALSE);
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'max_failures', value => 10); 
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'logging_level', value => DBMS_SCHEDULER.LOGGING_OFF); 
 sys.dbms_scheduler.set_attribute( name => '"PURGE_RECYCLEBIN_OLDER60DAYS"', attribute => 'job_weight', value => 1); 
--- sys.dbms_scheduler.enable( '"PURGE_RECYCLEBIN_OLDER60DAYS"' ); 
+sys.dbms_scheduler.enable( '"PURGE_RECYCLEBIN_OLDER60DAYS"' ); 
 END;
 /
 
+
+-- enable scheduler job
+execute dbms_scheduler.enable('PURGE_RECYCLEBIN_OLDER60DAYS');
+
+-- disable scheduler Job
+execute dbms_scheduler.disable('PURGE_RECYCLEBIN_OLDER60DAYS');
 
 -- to verify the history of the schedules
 select LOG_DATE,STATUS,RUN_DURATION,ERRORS,output 
@@ -94,3 +100,11 @@ select LOG_DATE,STATUS,RUN_DURATION,ERRORS,output
   where job_name = 'PURGE_RECYCLEBIN_OLDER60DAYS' 
  order by log_date
 /
+
+-- to check execution count and next run
+ select OWNER,JOB_NAME,ENABLED,RUN_COUNT,NEXT_RUN_DATE from dba_scheduler_jobs
+ where job_name = 'PURGE_RECYCLEBIN_OLDER60DAYS'
+ /
+ 
+ -- drop scheduler job
+ execute dbms_scheduler.drop_job('PURGE_RECYCLEBIN_OLDER60DAYS');
