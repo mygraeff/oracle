@@ -22,7 +22,7 @@
 
 -- create procedure
 
-CREATE PROCEDURE "MOVE_TABLES_2_TABLESPACE" 
+CREATE OR REPLACE PROCEDURE "MOVE_TABLES_2_TABLESPACE" 
 (
 -- Roland Gräff, Oracle Customer success services
 -- 20231114   Version 1.9
