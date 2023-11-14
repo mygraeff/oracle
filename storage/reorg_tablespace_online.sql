@@ -1,7 +1,7 @@
 -- 
 -- move_table_2_tablespace
 -- 
--- 202311 Version 1.8
+-- 202314 Version 1.9
 --
 -- the procedure is an example how to :
 --  reorg tablespaces online
@@ -25,7 +25,7 @@
 CREATE PROCEDURE "MOVE_TABLES_2_TABLESPACE" 
 (
 -- Roland Gräff, Oracle Customer success services
--- 20231113   Version 1.8
+-- 20231114   Version 1.9
 --
 -- in sqlplus use
 -- set serveroutput on
@@ -76,7 +76,9 @@ BEGIN
  );
 
  DBMS_STATS.GATHER_TABLE_STATS (ownname => q_owner, tabname => q_table);
- 
+
+ select LAST_ANALYZED into stat_date from dba_tables where owner = q_owner and table_name = q_table;
+
  DBMS_OUTPUT.PUT_LINE('table '||q_owner||'.'||q_table||' moved to '||targettblsp||' size MB '||q_size||' dbms_stat-date: '||to_char(stat_date,'''dd-mm-yy hh24:mi:ss'''));
  num_tables := num_tables + 1;
  end loop;
