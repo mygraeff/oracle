@@ -16,9 +16,7 @@
 -- https://github.com/mygraeff/oracle
 
 
-
---  privilege capture
--- https://oracle-base.com/articles/12c/capture-privilege-usage-12cr1
+-- documentation
 -- https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_PRIVILEGE_CAPTURE.html#GUID-8475738F-1660-4CCF-8171-A547DEAA78F2
 -- https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/performing-privilege-analysis-identify-privilege-use.html#GUID-624BEE71-EE04-450F-9E8D-E5DF9788D18C
 
