@@ -1,7 +1,7 @@
 --
 -- dbms_privilege_capture.sql 
 --
--- 202406 Version 1.1
+-- 202406 Version 1.2
 --
 -- with this procedure you are able to identify used privileges in a database 
 --
@@ -27,20 +27,28 @@
 -- High Library Cache: Mutex X After Enabling Privilege Capture - dbms_privilege_capture.create_capture (Doc ID 2952850.1)
 -- Privilege Analysis is not Working in a Procedure PL/SQL block Using DBMS_PRIVILEGE_CAPTURE (Doc ID 2891332.1)
 
+--for schema only
+define v_name = 'RGF'
+
+-- for role only
+-- define v_name = 'pub_analysis_pol'
+
+-- for database
+-- define v_name = 'database privilege capture'
 
 
--- A user defined condition, when user is RGF (type = G_CONTEXT).
+-- example : A user defined condition, when user is RGF (type = G_CONTEXT).
 begin
   dbms_privilege_capture.create_capture(
-    name        => 'cond_pol_RGF',
-	description => 'policy to record  privs used by schema RGF',
+    name        => 'cond_pol_&v_name',
+	description => 'policy to record  privs used by schema &v_name',
     type        => dbms_privilege_capture.g_context,
-    condition   => 'sys_context(''userenv'', ''session_user'') = ''RGF'''
+    condition   => 'sys_context(''userenv'', ''session_user'') = ''&v_name'''
   );
 end;
 /
 
---Create a privilege analysis policy to analyze privileges from the role PUBLIC
+--example : Create a privilege analysis policy to analyze privileges from the role PUBLIC
 begin
 dbms_privilege_capture.create_capture(
        name         => 'pub_analysis_pol',
@@ -50,7 +58,7 @@ dbms_privilege_capture.create_capture(
 end;
 /
 
--- Create a privilege analysis for the database
+-- example : Create a privilege analysis for the database
 begin
 dbms_privilege_capture.create_capture(
        name          => 'db_capt_pol',
@@ -84,14 +92,14 @@ order by name;
 
 -- enable
 begin
-	dbms_privilege_capture.enable_capture('cond_pol_RGF');
+	dbms_privilege_capture.enable_capture('cond_pol_&v_name');
 end;
 /
 
 
 -- disable_capture
 begin
-	dbms_privilege_capture.disable_capture('cond_pol_RGF');
+	dbms_privilege_capture.disable_capture('cond_pol_&v_name');
 end;
 /
 
@@ -99,7 +107,7 @@ end;
 -- generate results
 
 begin
-  dbms_privilege_capture.generate_result('cond_pol_RGF');
+  dbms_privilege_capture.generate_result('cond_pol_&v_name');
 end;
 /
 
@@ -116,7 +124,7 @@ set pages 100
 
 select username, sys_priv, used_role, path
 from   dba_used_sysprivs_path
-where  capture = 'cond_pol_RGF'
+where  capture = 'cond_pol_&v_name'
 order by username, sys_priv;
 
 -- obj_priv used
@@ -128,13 +136,13 @@ column object_type format a11
 
 select sequence,username, obj_priv, object_owner, object_name, object_type, used_role
 from   dba_used_objprivs
-where  capture = 'cond_pol_RGF';
+where  capture = 'cond_pol_&v_name';
 
 
 -- drop capture
 -- results of this capture will also be deleted
 begin 
-	dbms_privilege_capture.drop_capture('cond_pol_RGF');
+	dbms_privilege_capture.drop_capture('cond_pol_&v_name');
 end;
 /
 
@@ -156,10 +164,10 @@ cond_pol_RGF   CONTEXT          N                      sys_context('userenv', 's
 
 USERNAME             SYS_PRIV             USED_ROLE                      PATH
 -------------------- -------------------- ------------------------------ --------------------------------------------------
-RGF                 CREATE SESSION       CONNECT                        GRANT_PATH('RGF', 'S0Y_ROLE', 'CONNECT')
-RGF                 CREATE SESSION       CONNECT                        GRANT_PATH('RGF', 'S0Y_ROLE')
+RGF                 CREATE SESSION       CONNECT                        GRANT_PATH('RGF', 'RGF_ROLE', 'CONNECT')
+RGF                 CREATE SESSION       CONNECT                        GRANT_PATH('RGF', 'RGF_ROLE')
 RGF                 CREATE TABLE         RESOURCE                       GRANT_PATH('RGF', 'RESOURCE')
-RGF                 CREATE TABLE         RESOURCE                       GRANT_PATH('RGF', 'S0Y_ROLE', 'RESOURCE')
+RGF                 CREATE TABLE         RESOURCE                       GRANT_PATH('RGF', 'RGF_ROLE', 'RESOURCE')
 
 
 
